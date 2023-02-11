@@ -43,21 +43,17 @@ router.post('/', (req, res) => {
 });
 
 router.put('/:id', (req, res) => {
-  Category.findByPk(req.params.id)
-  .then(category => {
-    if (!category) {
-      return res.status(404).json({ message: 'Category not found' });
-    }
-    return category.update({
-      name: req.body.name
-    });
-  })
-  .then(updatedCategory => {
-    res.json(updatedCategory);
-  })
-  .catch(err => {
-    res.status(400).json({ message: err.message });
-  });
+  const id = req.params.id;
+  const { category_name } = req.body;
+
+  Category.update({ category_name }, { where: { id } })
+    .then(updated => {
+      if (!updated[0]) {
+        return res.status(404).json({ message: 'Category not found' });
+      }
+      res.status(200).json({ message: 'Category updated' });
+    })
+    .catch(err => res.status(400).json({ message: err.message }));
 });
 
 router.delete('/:id', (req, res) => {

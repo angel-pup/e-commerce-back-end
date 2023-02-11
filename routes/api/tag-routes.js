@@ -30,9 +30,9 @@ router.post('/', (req, res) => {
 
 router.put('/:id', (req, res) => {
   const id = req.params.id;
-  const { name } = req.body;
+  const { tag_name } = req.body;
 
-  Tag.update({ name }, { where: { id } })
+  Tag.update({ tag_name }, { where: { id } })
     .then(updated => {
       if (!updated[0]) {
         return res.status(404).json({ message: 'Tag not found' });
