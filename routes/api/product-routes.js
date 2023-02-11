@@ -5,14 +5,46 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 
 // get all products
 router.get('/', (req, res) => {
-  // find all products
-  // be sure to include its associated Category and Tag data
+  Product.findAll({
+    include: [{
+      model: Category,
+    }, {
+      model: Tag,
+      through: {
+        model: ProductTag,
+      }
+    }]
+  })
+  .then(products => {
+    res.json(products);
+  })
+  .catch(err => {
+    res.status(500).json({ message: err.message });
+  });
 });
+
 
 // get one product
 router.get('/:id', (req, res) => {
-  // find a single product by its `id`
-  // be sure to include its associated Category and Tag data
+  Product.findByPk(req.params.id, {
+    include: [{
+      model: Category,
+    }, {
+      model: Tag,
+      through: {
+        model: ProductTag,
+      }
+    }]
+  })
+  .then(product => {
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    res.json(product);
+  })
+  .catch(err => {
+    res.status(500).json({ message: err.message });
+  });
 });
 
 // create new product
@@ -25,6 +57,7 @@ router.post('/', (req, res) => {
       tagIds: [1, 2, 3, 4]
     }
   */
+ 
   Product.create(req.body)
     .then((product) => {
       // if there's product tags, we need to create pairings to bulk create in the ProductTag model
@@ -90,7 +123,18 @@ router.put('/:id', (req, res) => {
 });
 
 router.delete('/:id', (req, res) => {
-  // delete one product by its `id` value
+  const id = req.params.id;
+
+  Product.destroy({ where: { id } })
+    .then(deletedProduct => {
+      if (deletedProduct === 0) {
+        return res.status(404).json({ message: 'Product not found' });
+      }
+      res.status(200).json({ message: 'Product deleted successfully' });
+    })
+    .catch(err => {
+      res.status(400).json({ message: err.message });
+    });
 });
 
 module.exports = router;

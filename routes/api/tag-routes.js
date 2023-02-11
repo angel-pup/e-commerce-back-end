@@ -4,25 +4,55 @@ const { Tag, Product, ProductTag } = require('../../models');
 // The `/api/tags` endpoint
 
 router.get('/', (req, res) => {
-  // find all tags
-  // be sure to include its associated Product data
+  Tag.findAll()
+    .then(tags => res.status(200).json(tags))
+    .catch(err => res.status(400).json({ message: err.message }));
 });
 
 router.get('/:id', (req, res) => {
-  // find a single tag by its `id`
-  // be sure to include its associated Product data
+  const id = req.params.id;
+
+  Tag.findByPk(id)
+    .then(tag => {
+      if (!tag) {
+        return res.status(404).json({ message: 'Tag not found' });
+      }
+      res.status(200).json(tag);
+    })
+    .catch(err => res.status(400).json({ message: err.message }));
 });
 
 router.post('/', (req, res) => {
-  // create a new tag
+  Tag.create(req.body)
+    .then(tag => res.status(201).json(tag))
+    .catch(err => res.status(400).json({ message: err.message }));
 });
 
 router.put('/:id', (req, res) => {
-  // update a tag's name by its `id` value
+  const id = req.params.id;
+  const { name } = req.body;
+
+  Tag.update({ name }, { where: { id } })
+    .then(updated => {
+      if (!updated[0]) {
+        return res.status(404).json({ message: 'Tag not found' });
+      }
+      res.status(200).json({ message: 'Tag updated' });
+    })
+    .catch(err => res.status(400).json({ message: err.message }));
 });
 
 router.delete('/:id', (req, res) => {
-  // delete on tag by its `id` value
+  const id = req.params.id;
+
+  Tag.destroy({ where: { id } })
+    .then(deleted => {
+      if (!deleted) {
+        return res.status(404).json({ message: 'Tag not found' });
+      }
+      res.status(200).json({ message: 'Tag deleted' });
+    })
+    .catch(err => res.status(400).json({ message: err.message }));
 });
 
 module.exports = router;

@@ -37,12 +37,6 @@ Product.init(
       }
     },
 
-    stock: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      default: 10
-    },
-
     category_id: {
       type: DataTypes.INTEGER,
       references: {
