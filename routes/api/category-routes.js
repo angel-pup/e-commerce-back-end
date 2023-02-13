@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { Category, Product } = require('../../models');
+const { bulkBuild } = require('../../models/Product');
 
 router.get('/', (req, res) => {
   Category.findAll({
@@ -33,13 +34,12 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  Category.create(req.body)
-  .then(category => {
-    res.status(201).json(category);
-  })
-  .catch(err => {
-    res.status(400).json({ message: err.message });
-  });
+  const ok = data => res.status(201).json(data);
+  const err = err => res.status(400).json({ message: err.message });
+
+  Array.isArray(req.body)
+    ? Category.bulkCreate(req.body).then(ok).catch(err)
+    : Category.create(req.body).then(ok).catch(err);
 });
 
 router.put('/:id', (req, res) => {
