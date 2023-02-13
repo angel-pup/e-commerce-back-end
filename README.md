@@ -41,8 +41,7 @@ req.body should look like this...
     }
 
 ##### Categories
-- /api/categories
--- GET: 200 OK: JSON of all categories stored in DB
+- /api/categories - GET: 200 OK: JSON of all categories stored in DB
 - /api/categories/:id - GET: 200 OK: JSON of a single category given it's ID
 - /api/categories/:id - DELETE: 200 OK: 'Category deleted' upon successful deletion
 - /api/categories - CREATE: 200 OK: responds with data given if successful (look at example request body below)
